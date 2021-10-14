@@ -13,6 +13,7 @@
 #include <algorithm>
 
 #include "xtl/xcomplex.hpp"
+#include "xtl/xtype_traits.hpp"
 
 #include "xtensor/xarray.hpp"
 #include "xtensor/xcomplex.hpp"
@@ -328,7 +329,8 @@ namespace lapack
     {
         using value_type = typename E::value_type;
         using underlying_value_type = typename value_type::value_type;
-        using xtype1 = xtensor<underlying_value_type, 1, layout_type::column_major>;
+        using promoted_value_type = xtl::promote_type_t<underlying_value_type, double>;
+        using xtype1 = xtensor<promoted_value_type, 1, layout_type::column_major>;
         using xtype2 = xtensor<value_type, 2, layout_type::column_major>;
 
         XTENSOR_ASSERT(A.dimension() == 2);

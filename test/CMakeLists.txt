@@ -145,6 +145,7 @@ set(XTENSOR_BLAS_TESTS
     test_dot.cpp
     test_dot_extended.cpp
     test_qr.cpp
+    test_206.cpp
 )
 
 add_executable(test_xtensor_blas ${XTENSOR_BLAS_TESTS} ${XTENSOR_BLAS_HEADERS} ${XTENSOR_HEADERS})

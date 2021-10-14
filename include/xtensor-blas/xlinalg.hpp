@@ -16,6 +16,7 @@
 #include <chrono>
 
 #include "xtl/xcomplex.hpp"
+#include "xtl/xtype_traits.hpp"
 
 #include "xtensor/xarray.hpp"
 #include "xtensor/xcomplex.hpp"
@@ -59,10 +60,11 @@ namespace linalg
     {
         using value_type = typename E::value_type;
         using underlying_value_type = xtl::complex_value_type_t<value_type>;
+        using promoted_underlying_value_type = xtl::promote_type_t<underlying_value_type, double>;
 
         const auto& v = vec.derived_cast();
 
-        underlying_value_type result = 0;
+        promoted_underlying_value_type result = 0;
         if (v.dimension() == 1)
         {
             if (ord == 1)
@@ -87,7 +89,7 @@ namespace linalg
             {
                 for (std::size_t i = 0; i < v.size(); ++i)
                 {
-                    result += (v(i) != underlying_value_type(0));
+                    result += (v(i) != value_type(0));
                 }
             }
             else
@@ -104,7 +106,7 @@ namespace linalg
         {
             if (ord == 1 || ord == -1)
             {
-                xtensor<underlying_value_type, 1> s = sum(abs(v), {0});
+                xtensor<promoted_underlying_value_type, 1> s = sum(abs(v), {0});
                 if (ord == 1)
                 {
                     return *std::max_element(s.begin(), s.end());
@@ -121,11 +123,11 @@ namespace linalg
                 auto& s = std::get<2>(gesdd_res);
                 if (ord == 2)
                 {
-                    return *std::max_element(s.begin(), s.end());
+                    return promoted_underlying_value_type(*std::max_element(s.begin(), s.end()));
                 }
                 else
                 {
-                    return *std::min_element(s.begin(), s.end());
+                    return promoted_underlying_value_type(*std::min_element(s.begin(), s.end()));
                 }
             }
         }
@@ -201,7 +203,7 @@ namespace linalg
      * @return norm
      */
     template <class E>
-    typename E::value_type norm(const xexpression<E>& vec)
+    typename xtl::promote_type_t<typename E::value_type,double> norm(const xexpression<E>& vec)
     {
         const auto& v = vec.derived_cast();
         if (v.dimension() == 1)
